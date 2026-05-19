@@ -1,0 +1,16 @@
+{
+  "name": "react-vite",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -n host,r1,r2,r3 -c blue,red,green,magenta \"pnpm -F react-vite-host dev\" \"pnpm -F react-vite-remote-1 dev\" \"pnpm -F react-vite-remote-2 dev\" \"pnpm -F react-vite-remote-3 dev\"",
+    "build": "pnpm -F './*' build",
+    "preview": "concurrently -k -n host,r1,r2,r3 -c blue,red,green,magenta \"pnpm -F react-vite-host preview\" \"pnpm -F react-vite-remote-1 preview\" \"pnpm -F react-vite-remote-2 preview\" \"pnpm -F react-vite-remote-3 preview\"",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "concurrently": "^9.2.1",
+    "playwright": "^1.60.0"
+  }
+}
