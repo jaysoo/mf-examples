@@ -1,0 +1,29 @@
+{
+  "name": "host",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "host",
+    "targets": {
+      "serve": {
+        "options": {
+          "port": 4200
+        },
+        "dependsOn": [
+          "typecheck"
+        ]
+      },
+      "build": {
+        "dependsOn": [
+          "^build",
+          "typecheck"
+        ]
+      }
+    }
+  },
+  "devDependencies": {
+    "remote1": "workspace:*",
+    "remote2": "workspace:*",
+    "remote3": "workspace:*"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@org/ng_remote2-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "ng_remote2-e2e"
+  }
+}

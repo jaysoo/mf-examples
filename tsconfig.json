@@ -2,5 +2,54 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./packages/nx-react/host-e2e"
+    },
+    {
+      "path": "./packages/nx-react/host"
+    },
+    {
+      "path": "./packages/nx-react/remote1-e2e"
+    },
+    {
+      "path": "./packages/nx-react/remote1"
+    },
+    {
+      "path": "./packages/nx-react/remote2-e2e"
+    },
+    {
+      "path": "./packages/nx-react/remote2"
+    },
+    {
+      "path": "./packages/nx-react/remote3-e2e"
+    },
+    {
+      "path": "./packages/nx-react/remote3"
+    },
+    {
+      "path": "./packages/nx-angular/host-e2e"
+    },
+    {
+      "path": "./packages/nx-angular/ng_remote1-e2e"
+    },
+    {
+      "path": "./packages/nx-angular/ng_remote2-e2e"
+    },
+    {
+      "path": "./packages/nx-angular/ng_remote3-e2e"
+    },
+    {
+      "path": "./packages/nx-angular/ng_remote1"
+    },
+    {
+      "path": "./packages/nx-angular/ng_remote2"
+    },
+    {
+      "path": "./packages/nx-angular/ng_remote3"
+    },
+    {
+      "path": "./packages/nx-angular/host"
+    }
+  ]
 }

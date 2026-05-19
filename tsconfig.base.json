@@ -5,7 +5,9 @@
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["es2022"],
+    "lib": [
+      "es2022"
+    ],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "noEmitOnError": true,
@@ -16,6 +18,19 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@org/source"]
+    "customConditions": [
+      "@org/source"
+    ],
+    "paths": {
+      "ng_remote1/Routes": [
+        "./packages/nx-angular/ng_remote1/src/app/remote-entry/entry.routes.ts"
+      ],
+      "ng_remote2/Routes": [
+        "./packages/nx-angular/ng_remote2/src/app/remote-entry/entry.routes.ts"
+      ],
+      "ng_remote3/Routes": [
+        "./packages/nx-angular/ng_remote3/src/app/remote-entry/entry.routes.ts"
+      ]
+    }
   }
 }

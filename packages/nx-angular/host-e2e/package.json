@@ -1,0 +1,8 @@
+{
+  "name": "@org/ng-host-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "ng-host-e2e"
+  }
+}

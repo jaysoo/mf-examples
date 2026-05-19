@@ -52,7 +52,14 @@ Thumbs.db
 **/test-results/
 **/playwright-report/
 **/e2e/screenshots/
+**/host-e2e/screenshots/
+**/host-e2e/test-output/
 
 # Module Federation auto-generated types
 **/@mf-types/
 **/@mf-types.d.ts
+.angular
+
+test-output
+
+vitest.config.*.timestamp*

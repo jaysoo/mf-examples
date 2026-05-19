@@ -1,0 +1,34 @@
+{
+  "name": "remote3",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "remote3",
+    "targets": {
+      "serve": {
+        "options": {
+          "port": 4203
+        },
+        "dependsOn": [
+          "typecheck",
+          "host:serve"
+        ]
+      },
+      "build": {
+        "dependsOn": [
+          "^build",
+          "typecheck"
+        ]
+      }
+    }
+  },
+  "exports": {
+    "./Module": {
+      "@org/source": "./src/remote-entry.ts",
+      "types": "./src/remote-entry.ts",
+      "import": "./src/remote-entry.ts",
+      "default": "./src/remote-entry.ts"
+    }
+  },
+  "types": "./src/remote-entry.ts"
+}
