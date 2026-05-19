@@ -1,0 +1,37 @@
+{
+  "name": "angular-native-fed",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "dev": "concurrently -k -n host,r1,r2,r3 -c blue,red,green,magenta \"ng serve host\" \"ng serve remote-1\" \"ng serve remote-2\" \"ng serve remote-3\"",
+    "build": "ng build host && ng build remote-1 && ng build remote-2 && ng build remote-3",
+    "test:e2e": "playwright test"
+  },
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "dependencies": {
+    "@angular/common": "^21.2.0",
+    "@angular/animations": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@angular-architects/native-federation": "^21.2.3",
+    "@softarc/native-federation-node": "^3.3.4",
+    "es-module-shims": "^1.10.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^21.2.11",
+    "@angular/build": "^21.2.11",
+    "@angular/cli": "^21.2.11",
+    "@angular/compiler-cli": "^21.2.0",
+    "@playwright/test": "^1.60.0",
+    "concurrently": "^9.0.0",
+    "playwright": "^1.60.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
+  }
+}

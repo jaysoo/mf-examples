@@ -1,0 +1,22 @@
+<section class="remote remote-2" data-testid="remote-2">
+  <h1>Remote 2 — Form</h1>
+  <p>Two-way bound inputs rendered by the federated Angular remote.</p>
+  <form (ngSubmit)="onSubmit()" class="form" #f="ngForm">
+    <label>
+      Name
+      <input type="text" name="name" [(ngModel)]="name" data-testid="form-name" required />
+    </label>
+    <label>
+      Email
+      <input type="email" name="email" [(ngModel)]="email" data-testid="form-email" required />
+    </label>
+    <label>
+      Message
+      <textarea name="message" [(ngModel)]="message" data-testid="form-message" rows="3"></textarea>
+    </label>
+    <button type="submit" data-testid="form-submit">Submit</button>
+  </form>
+  @if (submitted(); as s) {
+    <pre class="output" data-testid="form-output">{{ s | json }}</pre>
+  }
+</section>

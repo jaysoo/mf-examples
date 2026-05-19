@@ -1,0 +1,12 @@
+<section data-testid="home">
+  <h1>Module Federation Host (Angular Native Federation)</h1>
+  <p>Three remotes are federated into this host. Click each route to load its remote module.</p>
+  <ul class="remote-list">
+    @for (r of remotes; track r.path) {
+      <li>
+        <a [routerLink]="r.path">{{ r.name }}</a>
+        <span class="desc">{{ r.desc }}</span>
+      </li>
+    }
+  </ul>
+</section>

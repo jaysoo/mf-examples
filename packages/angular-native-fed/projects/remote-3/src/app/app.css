@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.remote-3 {
+  --accent: #2563eb;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 24px;
+  background: white;
+}
+
+.remote-3 h1 {
+  margin-top: 0;
+  color: var(--accent);
+}
+
+.remote-3 .users {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.remote-3 .users li {
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.remote-3 .users .email {
+  font-size: 13px;
+  color: #1e3a8a;
+}
+
+.remote-3 .loading {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.remote-3 .error {
+  color: #991b1b;
+}

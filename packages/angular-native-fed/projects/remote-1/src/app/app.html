@@ -1,0 +1,10 @@
+<section class="remote remote-1" data-testid="remote-1">
+  <h1>Remote 1 — Counter</h1>
+  <p>Local state managed inside the federated Angular remote.</p>
+  <p class="count" data-testid="counter-value">{{ count() }}</p>
+  <div class="controls">
+    <button (click)="dec()" aria-label="decrement">-</button>
+    <button (click)="reset()" aria-label="reset">reset</button>
+    <button (click)="inc()" aria-label="increment">+</button>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+<section class="remote remote-3" data-testid="remote-3">
+  <h1>Remote 3 — List</h1>
+  <p>Data fetched at runtime by the federated Angular remote.</p>
+  @if (error(); as err) {
+    <p class="error">Failed to load: {{ err }}</p>
+  }
+  @if (!users() && !error()) {
+    <p class="loading">Loading…</p>
+  }
+  @if (users(); as list) {
+    <ul class="users" data-testid="user-list">
+      @for (u of list; track u.id) {
+        <li>
+          <strong>{{ u.name }}</strong>
+          <span class="email">{{ u.email }}</span>
+        </li>
+      }
+    </ul>
+  }
+</section>

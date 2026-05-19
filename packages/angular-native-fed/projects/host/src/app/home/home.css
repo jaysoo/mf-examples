@@ -1,0 +1,29 @@
+h1 { margin-top: 0; }
+
+.remote-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.remote-list li {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.remote-list a {
+  font-weight: 600;
+  color: #1f2937;
+  text-decoration: none;
+}
+
+.remote-list .desc {
+  color: #64748b;
+  font-size: 14px;
+}
