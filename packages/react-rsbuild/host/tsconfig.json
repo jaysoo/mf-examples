@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "remote-1/*": ["./@mf-types/remote_1/*"],
+      "remote-2/*": ["./@mf-types/remote_2/*"],
+      "remote-3/*": ["./@mf-types/remote_3/*"]
+    },
+    "types": []
+  },
+  "include": ["src", "@mf-types"]
+}

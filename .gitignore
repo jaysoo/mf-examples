@@ -47,3 +47,12 @@ Thumbs.db
 .claude/settings.local.json
 .nx/polygraph
 .nx/self-healing
+
+# Playwright
+**/test-results/
+**/playwright-report/
+**/e2e/screenshots/
+
+# Module Federation auto-generated types
+**/@mf-types/
+**/@mf-types.d.ts

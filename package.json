@@ -2,7 +2,15 @@
   "name": "@org/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev:rsbuild": "pnpm -F './packages/react-rsbuild/*' --parallel dev",
+    "build:rsbuild": "pnpm -F './packages/react-rsbuild/*' build",
+    "preview:rsbuild": "pnpm -F './packages/react-rsbuild/*' --parallel preview",
+    "e2e:rsbuild": "pnpm -F react-rsbuild test:e2e",
+    "dev:rspack": "pnpm -F './packages/react-rspack/*' --parallel dev",
+    "build:rspack": "pnpm -F './packages/react-rspack/*' build",
+    "e2e:rspack": "pnpm -F react-rspack test:e2e"
+  },
   "private": true,
   "dependencies": {},
   "devDependencies": {

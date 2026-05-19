@@ -1,0 +1,15 @@
+{
+  "name": "react-rsbuild",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -F './*' --parallel dev",
+    "build": "pnpm -F './*' build",
+    "preview": "pnpm -F './*' --parallel preview",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "playwright": "^1.60.0"
+  }
+}
