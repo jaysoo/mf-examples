@@ -156,40 +156,6 @@ cd apps/nx-react-vite && pnpm test:e2e
 
 Ports: 5200 (host) / 5201-5203 (remotes). The orchestration uses plain `nx:run-commands` with `continuous: true` + `dependsOn` — no custom executor required. See [`apps/nx-react-vite/README.md`](./apps/nx-react-vite/README.md) for the full task graph + note on why `@nx/module-federation` custom executors don't apply to Vite hosts in v22.7.
 
-## Dynamic federation mode
-
-All four "plain" trees (react-rspack, react-rsbuild, react-vite, angular-native-fed) ship a **second e2e suite** that proves dynamic / runtime federation works:
-
-```bash
-cd apps/react-rspack    && pnpm test:e2e:dynamic
-cd apps/react-rsbuild   && pnpm test:e2e:dynamic
-cd apps/react-vite      && pnpm test:e2e:dynamic
-cd apps/angular-native-fed && pnpm test:e2e:dynamic
-```
-
-Each dynamic suite spawns **only the host + remote-1** (not all 3 remotes). The host's remote list still references remote-2 / remote-3, but because remote URLs are fetched lazily, the host:
-
-1. Boots cleanly with zero console errors.
-2. Renders `/remote-1` (server alive) correctly.
-3. (React trees) Falls back to a `<RemoteErrorBoundary>` when `/remote-2` is visited and remote-2's server is unreachable — host doesn't crash.
-
-This proves you don't need to run every remote dev server to develop the host. In a real org with 30+ remotes, this is what lets a developer run only the 1-2 remotes they own locally and point at deployed URLs (or rely on a graceful 404) for everything else.
-
-**How each tree implements it:**
-
-- **react-{rspack,rsbuild,vite}** — host's bundler config drops `remotes:`. Host fetches `public/mf-remotes.json` at boot and calls `init({ remotes: [...] })` from `@module-federation/runtime` (or `@module-federation/enhanced/runtime`). Routes use `loadRemote('remote-N/RoutedApp')` instead of static `import('remote-N/...')`.
-- **angular-native-fed** — already dynamic-by-default. The host's `initFederation('federation.manifest.json')` reads the manifest at boot; `loadRemoteModule()` triggers per-route fetches. No code changes needed beyond the e2e proof.
-
-To swap remote URLs per environment without rebuilding, you just edit `mf-remotes.json` (React) or `federation.manifest.json` (Angular) before serving.
-
-## Comparing trees
-
-The React `src/` is byte-identical across `react-rspack`, `react-rsbuild`, and `react-vite` — only the bundler config differs. That's intentional, so you can `diff -r` and see exactly what changes when you swap bundlers.
-
-The Nx React tree diverges slightly because the Nx generator uses `remote1` (no hyphen — Nx project name rule) and the host references remotes via `module-federation.config.ts` instead of inline plugin config.
-
-The Angular trees are functionally equivalent but use Angular template/signals syntax, so they don't parity with React.
-
 ## Key files per tree
 
 | Concern           | Plain React (rspack/rsbuild/vite)                | Angular Native Fed                                        | Nx React                                              | Nx Angular                                        |
