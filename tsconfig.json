@@ -4,52 +4,52 @@
   "files": [],
   "references": [
     {
-      "path": "./packages/nx-react/host-e2e"
+      "path": "./apps/nx-angular/ng_remote1-e2e"
     },
     {
-      "path": "./packages/nx-react/host"
+      "path": "./apps/nx-angular/ng_remote2-e2e"
     },
     {
-      "path": "./packages/nx-react/remote1-e2e"
+      "path": "./apps/nx-angular/ng_remote3-e2e"
     },
     {
-      "path": "./packages/nx-react/remote1"
+      "path": "./apps/nx-angular/ng_remote1"
     },
     {
-      "path": "./packages/nx-react/remote2-e2e"
+      "path": "./apps/nx-angular/ng_remote2"
     },
     {
-      "path": "./packages/nx-react/remote2"
+      "path": "./apps/nx-angular/ng_remote3"
     },
     {
-      "path": "./packages/nx-react/remote3-e2e"
+      "path": "./apps/nx-react/remote1-e2e"
     },
     {
-      "path": "./packages/nx-react/remote3"
+      "path": "./apps/nx-react/remote2-e2e"
     },
     {
-      "path": "./packages/nx-angular/host-e2e"
+      "path": "./apps/nx-react/remote3-e2e"
     },
     {
-      "path": "./packages/nx-angular/ng_remote1-e2e"
+      "path": "./apps/nx-angular/host-e2e"
     },
     {
-      "path": "./packages/nx-angular/ng_remote2-e2e"
+      "path": "./apps/nx-react/host-e2e"
     },
     {
-      "path": "./packages/nx-angular/ng_remote3-e2e"
+      "path": "./apps/nx-react/remote1"
     },
     {
-      "path": "./packages/nx-angular/ng_remote1"
+      "path": "./apps/nx-react/remote2"
     },
     {
-      "path": "./packages/nx-angular/ng_remote2"
+      "path": "./apps/nx-react/remote3"
     },
     {
-      "path": "./packages/nx-angular/ng_remote3"
+      "path": "./apps/nx-angular/host"
     },
     {
-      "path": "./packages/nx-angular/host"
+      "path": "./apps/nx-react/host"
     }
   ]
 }

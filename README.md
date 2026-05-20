@@ -6,21 +6,22 @@ For an in-depth comparison of capabilities, gotchas, and trade-offs across all s
 
 ## What's here
 
-| Path | Stack | Bundler | MF plugin | Default ports |
-|------|-------|---------|-----------|---------------|
-| [`packages/react-rspack`](./packages/react-rspack) | React 19 | Rspack CLI | `@module-federation/enhanced` | 3000 / 3001-3 |
-| [`packages/react-rsbuild`](./packages/react-rsbuild) | React 19 | Rsbuild | `@module-federation/enhanced` via `tools.rspack` | 3000 / 3001-3 |
-| [`packages/react-vite`](./packages/react-vite) | React 19 | Vite | `@module-federation/vite` | 5100 / 5101-3 |
-| [`packages/angular-native-fed`](./packages/angular-native-fed) | Angular 21 | esbuild | `@angular-architects/native-federation` | 4200 / 4201-3 |
-| [`packages/nx-react`](./packages/nx-react) | React 19, Nx-generated | Rspack | `@nx/module-federation` | 4200 / 4201-3 |
-| [`packages/nx-angular`](./packages/nx-angular) | Angular 21, Nx-generated | Webpack | `@nx/module-federation` (classic MF, not Native Fed) | 4200 / 4201-3 |
+| Path                                                           | Stack                    | Bundler    | MF plugin                                            | Default ports |
+| -------------------------------------------------------------- | ------------------------ | ---------- | ---------------------------------------------------- | ------------- |
+| [`packages/react-rspack`](./packages/react-rspack)             | React 19                 | Rspack CLI | `@module-federation/enhanced`                        | 3000 / 3001-3 |
+| [`packages/react-rsbuild`](./packages/react-rsbuild)           | React 19                 | Rsbuild    | `@module-federation/enhanced` via `tools.rspack`     | 3000 / 3001-3 |
+| [`packages/react-vite`](./packages/react-vite)                 | React 19                 | Vite       | `@module-federation/vite`                            | 5100 / 5101-3 |
+| [`packages/angular-native-fed`](./packages/angular-native-fed) | Angular 21               | esbuild    | `@angular-architects/native-federation`              | 4200 / 4201-3 |
+| [`packages/nx-react`](./packages/nx-react)                     | React 19, Nx-generated   | Rspack     | `@nx/module-federation`                              | 4200 / 4201-3 |
+| [`packages/nx-angular`](./packages/nx-angular)                 | Angular 21, Nx-generated | Webpack    | `@nx/module-federation` (classic MF, not Native Fed) | 4200 / 4201-3 |
 
 Each tree exposes the same three remotes:
+
 - **remote-1 / remote1** — `useState` Counter with +/-/reset buttons
 - **remote-2 / remote2** — Controlled Form (Name/Email/Message) that echoes the submitted payload
 - **remote-3 / remote3** — Fetches users from `jsonplaceholder.typicode.com` and renders the list
 
-Each remote is also independently runnable on its own port — federation-loaded *and* standalone work.
+Each remote is also independently runnable on its own port — federation-loaded _and_ standalone work.
 
 ## Setup
 
@@ -125,6 +126,7 @@ Each tree's e2e captures 7 full-page screenshots:
 - `07-standalone-remote-3.png` — remote 3 standalone
 
 Locations:
+
 - React (non-Nx): `packages/react-*/e2e/screenshots/`
 - Angular Native Fed: `packages/angular-native-fed/e2e/screenshots/`
 - Nx trees: `packages/nx-*/host-e2e/screenshots/`
@@ -141,12 +143,12 @@ The Angular trees are functionally equivalent but use Angular template/signals s
 
 ## Key files per tree
 
-| Concern | Plain React (rspack/rsbuild/vite) | Angular Native Fed | Nx React | Nx Angular |
-|---|---|---|---|---|
-| Bundler config | `<app>/{rspack,rsbuild,vite}.config.ts` | `projects/<app>/` (Angular CLI handles it) | `<app>/rspack.config.ts` | `<app>/webpack.config.ts` |
-| Federation config | inline in bundler config | `projects/<app>/federation.config.js` | `<app>/module-federation.config.ts` | `<app>/module-federation.config.ts` |
-| Remote URL list | inline `remotes: {...}` in host's bundler config | `projects/host/public/federation.manifest.json` (runtime) | host's `module-federation.config.ts` `remotes: [...]` | same |
-| Exposed entry | `src/RoutedApp.tsx` (React) | `projects/<remote>/src/app/remote-entry/entry.ts` | `<remote>/src/remote-entry.ts` | `projects/<remote>/src/app/remote-entry/entry.ts` |
+| Concern           | Plain React (rspack/rsbuild/vite)                | Angular Native Fed                                        | Nx React                                              | Nx Angular                                        |
+| ----------------- | ------------------------------------------------ | --------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- |
+| Bundler config    | `<app>/{rspack,rsbuild,vite}.config.ts`          | `projects/<app>/` (Angular CLI handles it)                | `<app>/rspack.config.ts`                              | `<app>/webpack.config.ts`                         |
+| Federation config | inline in bundler config                         | `projects/<app>/federation.config.js`                     | `<app>/module-federation.config.ts`                   | `<app>/module-federation.config.ts`               |
+| Remote URL list   | inline `remotes: {...}` in host's bundler config | `projects/host/public/federation.manifest.json` (runtime) | host's `module-federation.config.ts` `remotes: [...]` | same                                              |
+| Exposed entry     | `src/RoutedApp.tsx` (React)                      | `projects/<remote>/src/app/remote-entry/entry.ts`         | `<remote>/src/remote-entry.ts`                        | `projects/<remote>/src/app/remote-entry/entry.ts` |
 
 ## License
 
