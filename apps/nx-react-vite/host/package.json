@@ -9,7 +9,6 @@
     "preview": "vite preview --port 5200 --strictPort"
   },
   "nx": {
-    "name": "nx-react-vite-host",
     "targets": {
       "serve": {
         "executor": "nx:run-commands",

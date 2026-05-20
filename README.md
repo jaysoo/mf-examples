@@ -116,17 +116,21 @@ Project names: `ng-host` plus `ng_remote1` / `ng_remote2` / `ng_remote3` (Nx's p
 
 ### Nx-managed React + Vite (`apps/nx-react-vite`)
 
-Vite tree wrapped with the minimum Nx config to enable `dependsOn` + continuous tasks. **Serving any remote brings up host + the other two remotes as static-serve in one command:**
+Vite tree wrapped with the minimum Nx config to enable `dependsOn` + continuous tasks. Each remote's `serve` `dependsOn` lists only `nx-react-vite-host:serve`, so **serving any one remote brings up the host alongside it** — the other remotes are left off. Because federation is dynamic, the host's home + visited-remote routes still render; unstarted remotes hit the `RemoteErrorBoundary` gracefully.
 
 ```bash
+# Serve one remote (host comes up automatically)
 pnpm exec nx serve nx-react-vite-remote-1
-# ↑ also starts: nx-react-vite-host:serve, nx-react-vite-remote-2:serve-static,
-#                nx-react-vite-remote-3:serve-static
 
+# Serve a subset
+pnpm exec nx run-many --target=serve \
+  --projects=nx-react-vite-remote-1,nx-react-vite-remote-2 --parallel
+
+# E2E (proves host + 1 remote is a valid working setup)
 cd apps/nx-react-vite && pnpm test:e2e
 ```
 
-Ports: 5200 (host) / 5201-5203 (remotes). The orchestration uses plain `nx:run-commands` with `continuous: true` + `dependsOn` — no custom executor required. See [`apps/nx-react-vite/README.md`](./apps/nx-react-vite/README.md) for a note on why `@nx/module-federation` custom executors don't apply to Vite hosts in v22.7.
+Ports: 5200 (host) / 5201-5203 (remotes). The orchestration uses plain `nx:run-commands` with `continuous: true` + `dependsOn` — no custom executor required. See [`apps/nx-react-vite/README.md`](./apps/nx-react-vite/README.md) for the full task graph + note on why `@nx/module-federation` custom executors don't apply to Vite hosts in v22.7.
 
 ## Dynamic federation mode
 
@@ -190,7 +194,3 @@ The Angular trees are functionally equivalent but use Angular template/signals s
 | Federation config | inline in bundler config                         | `projects/<app>/federation.config.js`                     | `<app>/module-federation.config.ts`                   | `<app>/module-federation.config.ts`               |
 | Remote URL list   | inline `remotes: {...}` in host's bundler config | `projects/host/public/federation.manifest.json` (runtime) | host's `module-federation.config.ts` `remotes: [...]` | same                                              |
 | Exposed entry     | `src/RoutedApp.tsx` (React)                      | `projects/<remote>/src/app/remote-entry/entry.ts`         | `<remote>/src/remote-entry.ts`                        | `projects/<remote>/src/app/remote-entry/entry.ts` |
-
-## License
-
-MIT

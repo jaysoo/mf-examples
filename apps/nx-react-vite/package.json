@@ -6,7 +6,6 @@
     "test:e2e": "playwright test"
   },
   "nx": {
-    "name": "nx-react-vite",
     "targets": {
       "test:e2e": {
         "executor": "nx:run-commands",

@@ -9,16 +9,11 @@
     "preview": "vite preview --port 5203 --strictPort"
   },
   "nx": {
-    "name": "nx-react-vite-remote-3",
     "targets": {
       "serve": {
         "executor": "nx:run-commands",
         "continuous": true,
-        "dependsOn": [
-          "nx-react-vite-host:serve",
-          "nx-react-vite-remote-1:serve-static",
-          "nx-react-vite-remote-2:serve-static"
-        ],
+        "dependsOn": ["nx-react-vite-host:serve"],
         "options": {
           "command": "vite --port 5203 --strictPort",
           "cwd": "{projectRoot}"
