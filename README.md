@@ -34,16 +34,35 @@ The workspace uses pnpm workspaces (`apps/*` and `apps/*/*` globbed). Node and p
 
 ## How to run each stack
 
+### Running a subset of apps (non-Nx trees)
+
+Because federation is dynamic + lazy in every tree, the host renders fine when only the remotes you actively visit are running. Use `pnpm -F` filters to pick which apps boot:
+
+```bash
+# Just the host (no remotes — home page works; visiting /remote-N falls
+# back to the RemoteErrorBoundary gracefully)
+pnpm -F <tree>-host dev
+
+# Host + one remote
+pnpm -F <tree>-host -F <tree>-remote-1 --parallel dev
+
+# Host + all 3 remotes
+pnpm -F <tree>-host -F <tree>-remote-1 -F <tree>-remote-2 -F <tree>-remote-3 --parallel dev
+
+# Or the all-in-one root script (same as the last line above)
+pnpm dev
+```
+
+`<tree>` is `react-rspack`, `react-rsbuild`, `react-vite`, or `angular-native-fed`. For Angular use `host` / `remote-1` / `remote-2` / `remote-3` (no tree prefix on the project name).
+
 ### React + Rspack (`apps/react-rspack`)
 
 ```bash
 cd apps/react-rspack
-pnpm dev               # boots host (3000) + 3 remotes (3001/2/3), each its own dev server
+pnpm dev               # all 4 dev servers (host 3000, remotes 3001-3003)
 pnpm build             # production builds for all 4 apps -> dist/
 pnpm test:e2e          # Playwright; screenshots in e2e/screenshots/
 ```
-
-Each app also runs in isolation: `cd host && pnpm dev`, etc.
 
 ### React + Rsbuild (`apps/react-rsbuild`)
 
@@ -72,6 +91,11 @@ Ports are 5100-5103 (not 5000-5003) — macOS AirTunes hijacks port 5000 on the 
 ```bash
 cd apps/angular-native-fed
 pnpm dev               # concurrently runs 4 ng serves
+
+# Subset: edit the dev script or call ng serve directly
+ng serve host          # just host
+ng serve remote-1      # just remote-1 standalone
+
 pnpm build             # ng build each app
 pnpm test:e2e
 ```
@@ -80,35 +104,35 @@ The host loads remote URLs from `projects/host/public/federation.manifest.json` 
 
 ### Nx React (`apps/nx-react`)
 
-These trees are managed by Nx at the workspace root, not via per-tree scripts. Run from the repo root:
+Managed by Nx at the workspace root, not via per-tree scripts. Each remote's `serve` `dependsOn` lists the host's `serve` — so **serve any single remote and the host comes up automatically**. You almost never need to invoke `host:serve` directly.
 
 ```bash
-# host + all 3 remotes in dev (parallel dev servers — most reliable for this repo)
-\
-  pnpm exec nx run-many --target=serve --projects=host,remote1,remote2,remote3 --parallel=4
+# Just one remote (host comes up as a dependency)
+pnpm exec nx serve remote1
 
-# OR — the canonical Nx pattern: serve any single remote, host comes up automatically,
-# the other two remotes are built once and statically proxied
-pnpm exec nx run remote2:serve
+# A subset
+pnpm exec nx run-many --target=serve --projects=remote1,remote2 --parallel
 
-# OR — serve host directly, the plugin builds + static-serves all 3 remotes
-pnpm exec nx run host:serve
+# All 3 + host
+pnpm exec nx run-many --target=serve --projects=remote1,remote2,remote3 --parallel
 
-# e2e + screenshots
+# E2E + screenshots
 pnpm exec nx run host-e2e:e2e
 ```
 
-If you ever `nx reset` or delete `tmp/static-remotes/`, pre-build the other remotes once so the static proxy has files to serve:
+If you ever `nx reset` or delete `tmp/static-remotes/`, pre-build the remotes once so the static-remote proxy in the host's serve has files to read:
 
 ```bash
-\
-  pnpm exec nx run-many --target=rspack:build --projects=remote1,remote2,remote3 --configuration=development
+pnpm exec nx run-many --target=rspack:build --projects=remote1,remote2,remote3 --configuration=development
 ```
 
 ### Nx Angular (`apps/nx-angular`)
 
+Same pattern — serve a remote, host comes up via `dependsOn`:
+
 ```bash
-pnpm exec nx run ng-host:serve
+pnpm exec nx serve ng_remote1
+pnpm exec nx run-many --target=serve --projects=ng_remote1,ng_remote2 --parallel
 pnpm exec nx run ng-host-e2e:e2e
 ```
 
