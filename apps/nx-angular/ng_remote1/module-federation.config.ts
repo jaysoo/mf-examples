@@ -3,7 +3,7 @@ import { ModuleFederationConfig } from '@nx/module-federation';
 const config: ModuleFederationConfig = {
   name: 'ng_remote1',
   exposes: {
-    './Routes': 'packages/nx-angular/ng_remote1/src/app/remote-entry/entry.routes.ts',
+    './Routes': 'apps/nx-angular/ng_remote1/src/app/remote-entry/entry.routes.ts',
   },
 };
 

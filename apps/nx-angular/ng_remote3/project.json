@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "packages/nx-angular/ng_remote3/src",
+  "sourceRoot": "apps/nx-angular/ng_remote3/src",
   "tags": [],
   "targets": {
     "build": {
@@ -12,21 +12,21 @@
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "dist/packages/nx-angular/ng_remote3",
-        "index": "packages/nx-angular/ng_remote3/src/index.html",
-        "main": "packages/nx-angular/ng_remote3/src/main.ts",
-        "tsConfig": "packages/nx-angular/ng_remote3/tsconfig.app.json",
+        "outputPath": "dist/apps/nx-angular/ng_remote3",
+        "index": "apps/nx-angular/ng_remote3/src/index.html",
+        "main": "apps/nx-angular/ng_remote3/src/main.ts",
+        "tsConfig": "apps/nx-angular/ng_remote3/tsconfig.app.json",
         "assets": [
           {
             "glob": "**/*",
-            "input": "packages/nx-angular/ng_remote3/public"
+            "input": "apps/nx-angular/ng_remote3/public"
           }
         ],
         "styles": [
-          "packages/nx-angular/ng_remote3/src/styles.css"
+          "apps/nx-angular/ng_remote3/src/styles.css"
         ],
         "customWebpackConfig": {
-          "path": "packages/nx-angular/ng_remote3/webpack.config.ts"
+          "path": "apps/nx-angular/ng_remote3/webpack.config.ts"
         }
       },
       "configurations": {
@@ -45,7 +45,7 @@
           ],
           "outputHashing": "all",
           "customWebpackConfig": {
-            "path": "packages/nx-angular/ng_remote3/webpack.prod.config.ts"
+            "path": "apps/nx-angular/ng_remote3/webpack.prod.config.ts"
           }
         },
         "development": {
@@ -94,7 +94,7 @@
         "{options.reportsDirectory}"
       ],
       "options": {
-        "reportsDirectory": "coverage/packages/nx-angular/ng_remote3"
+        "reportsDirectory": "coverage/apps/nx-angular/ng_remote3"
       }
     },
     "serve-static": {

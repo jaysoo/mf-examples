@@ -157,8 +157,8 @@ cd packages/react-vite     && pnpm dev && pnpm test:e2e
 cd packages/angular-native-fed && pnpm dev && pnpm test:e2e
 
 # Nx-generated trees (from workspace root)
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run host-e2e:e2e     # nx-react
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host-e2e:e2e  # nx-angular
+pnpm exec nx run host-e2e:e2e     # nx-react
+pnpm exec nx run ng-host-e2e:e2e  # nx-angular
 ```
 
 Screenshots from e2e are written under each tree's `e2e/screenshots/` (or `host-e2e/screenshots/` for Nx trees).

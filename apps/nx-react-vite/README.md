@@ -29,13 +29,13 @@ From the workspace root (or anywhere — Nx is project-aware):
 
 ```bash
 # Serve any remote; host + the OTHER two come up as static-serve
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx serve nx-react-vite-remote-1
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx serve nx-react-vite-remote-2
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx serve nx-react-vite-remote-3
+pnpm exec nx serve nx-react-vite-remote-1
+pnpm exec nx serve nx-react-vite-remote-2
+pnpm exec nx serve nx-react-vite-remote-3
 
 # Or serve just the host (no remotes — useful for verifying host loads
 # without any remote being reachable, since federation is dynamic)
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx serve nx-react-vite-host
+pnpm exec nx serve nx-react-vite-host
 
 # E2E (boots the graph via nx serve nx-react-vite-remote-1)
 cd apps/nx-react-vite && pnpm test:e2e

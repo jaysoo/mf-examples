@@ -2,7 +2,7 @@
   "name": "ng-host-e2e",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "packages/nx-angular/host-e2e/src",
+  "sourceRoot": "apps/nx-angular/host-e2e/src",
   "implicitDependencies": [
     "ng-host"
   ],

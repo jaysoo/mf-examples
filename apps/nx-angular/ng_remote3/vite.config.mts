@@ -4,7 +4,7 @@ import angular from '@analogjs/vite-plugin-angular';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/packages/nx-angular/ng_remote3',
+  cacheDir: '../../../node_modules/.vite/apps/nx-angular/ng_remote3',
   plugins: [angular()],
   // Uncomment this if you are using workers.
   // worker: {

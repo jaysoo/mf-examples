@@ -80,36 +80,36 @@ The host loads remote URLs from `projects/host/public/federation.manifest.json` 
 
 ### Nx React (`apps/nx-react`)
 
-These trees are managed by Nx at the workspace root, not via per-tree scripts. Run from the repo root (the `NX_IGNORE_UNSUPPORTED_TS_SETUP=true` env var is needed because the workspace was bootstrapped as `@nx/js:typescript` which Angular's plugin doesn't fully support):
+These trees are managed by Nx at the workspace root, not via per-tree scripts. Run from the repo root:
 
 ```bash
 # host + all 3 remotes in dev (parallel dev servers — most reliable for this repo)
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true \
+\
   pnpm exec nx run-many --target=serve --projects=host,remote1,remote2,remote3 --parallel=4
 
 # OR — the canonical Nx pattern: serve any single remote, host comes up automatically,
 # the other two remotes are built once and statically proxied
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run remote2:serve
+pnpm exec nx run remote2:serve
 
 # OR — serve host directly, the plugin builds + static-serves all 3 remotes
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run host:serve
+pnpm exec nx run host:serve
 
 # e2e + screenshots
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run host-e2e:e2e
+pnpm exec nx run host-e2e:e2e
 ```
 
 If you ever `nx reset` or delete `tmp/static-remotes/`, pre-build the other remotes once so the static proxy has files to serve:
 
 ```bash
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true \
+\
   pnpm exec nx run-many --target=rspack:build --projects=remote1,remote2,remote3 --configuration=development
 ```
 
 ### Nx Angular (`apps/nx-angular`)
 
 ```bash
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host:serve
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host-e2e:e2e
+pnpm exec nx run ng-host:serve
+pnpm exec nx run ng-host-e2e:e2e
 ```
 
 Project names: `ng-host` plus `ng_remote1` / `ng_remote2` / `ng_remote3` (Nx's project-name rules disallow hyphens in the federation specifier, and we needed a different host name to avoid collision with the Nx React `host` project).
@@ -119,7 +119,7 @@ Project names: `ng-host` plus `ng_remote1` / `ng_remote2` / `ng_remote3` (Nx's p
 Vite tree wrapped with the minimum Nx config to enable `dependsOn` + continuous tasks. **Serving any remote brings up host + the other two remotes as static-serve in one command:**
 
 ```bash
-NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx serve nx-react-vite-remote-1
+pnpm exec nx serve nx-react-vite-remote-1
 # ↑ also starts: nx-react-vite-host:serve, nx-react-vite-remote-2:serve-static,
 #                nx-react-vite-remote-3:serve-static
 
