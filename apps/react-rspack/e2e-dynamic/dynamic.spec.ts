@@ -14,13 +14,29 @@ async function shoot(page: import('@playwright/test').Page, name: string) {
 // Dynamic federation guarantees: no remote manifest is fetched until a
 // route is navigated to, so the host boots clean and /remote-1 works.
 test.describe('dynamic federation (rspack) — host loads with only 1 remote alive', () => {
-  test('home renders without errors when only remote-1 is alive', async ({ page }) => {
+  test('home: zero cross-origin MF fetches until a remote route is hit', async ({ page }) => {
     const pageErrors: string[] = [];
+    const remoteRequests: string[] = [];
     page.on('pageerror', (e) => pageErrors.push(e.message));
+    page.on('request', (r) => {
+      const url = new URL(r.url());
+      // Flag any request to a different port than the host (i.e. a remote
+      // server) OR any request for our remote manifest config. The host's
+      // own internal MF virtual modules live on the host port — those are
+      // fine. Anything that crosses an origin OR fetches mf-remotes.json
+      // before a remote route is hit is a failure of laziness.
+      const hostOrigin = new URL('http://localhost:3000');
+      const isCrossOrigin = url.host !== hostOrigin.host;
+      const isManifestConfig = url.pathname.endsWith('/mf-remotes.json');
+      if (isCrossOrigin || isManifestConfig) {
+        remoteRequests.push(r.url());
+      }
+    });
     await page.goto('/', { waitUntil: 'networkidle' });
     await expect(page.getByTestId('home')).toBeVisible({ timeout: 15_000 });
     await expect(page.getByRole('link', { name: /remote 1/i })).toBeVisible();
     expect(pageErrors, `page errors: ${pageErrors.join('\n')}`).toEqual([]);
+    expect(remoteRequests, `unexpected remote/config fetches on home: ${remoteRequests.join('\n')}`).toEqual([]);
     await shoot(page, '01-home-with-only-remote-1');
   });
 
