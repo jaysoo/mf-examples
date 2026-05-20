@@ -14,6 +14,7 @@ For an in-depth comparison of capabilities, gotchas, and trade-offs across all s
 | [`apps/angular-native-fed`](./apps/angular-native-fed) | Angular 21               | esbuild    | `@angular-architects/native-federation`              | 4200 / 4201-3 |
 | [`apps/nx-react`](./apps/nx-react)                     | React 19, Nx-generated   | Rspack     | `@nx/module-federation`                              | 4200 / 4201-3 |
 | [`apps/nx-angular`](./apps/nx-angular)                 | Angular 21, Nx-generated | Webpack    | `@nx/module-federation` (classic MF, not Native Fed) | 4200 / 4201-3 |
+| [`apps/nx-react-vite`](./apps/nx-react-vite)           | React 19, Nx-managed     | Vite       | `@module-federation/vite` + Nx `dependsOn` graph     | 5200 / 5201-3 |
 
 Each tree exposes the same three remotes:
 
@@ -112,6 +113,20 @@ NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host-e2e:e2e
 ```
 
 Project names: `ng-host` plus `ng_remote1` / `ng_remote2` / `ng_remote3` (Nx's project-name rules disallow hyphens in the federation specifier, and we needed a different host name to avoid collision with the Nx React `host` project).
+
+### Nx-managed React + Vite (`apps/nx-react-vite`)
+
+Vite tree wrapped with the minimum Nx config to enable `dependsOn` + continuous tasks. **Serving any remote brings up host + the other two remotes as static-serve in one command:**
+
+```bash
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx serve nx-react-vite-remote-1
+# ↑ also starts: nx-react-vite-host:serve, nx-react-vite-remote-2:serve-static,
+#                nx-react-vite-remote-3:serve-static
+
+cd apps/nx-react-vite && pnpm test:e2e
+```
+
+Ports: 5200 (host) / 5201-5203 (remotes). The orchestration uses plain `nx:run-commands` with `continuous: true` + `dependsOn` — no custom executor required. See [`apps/nx-react-vite/README.md`](./apps/nx-react-vite/README.md) for a note on why `@nx/module-federation` custom executors don't apply to Vite hosts in v22.7.
 
 ## Dynamic federation mode
 

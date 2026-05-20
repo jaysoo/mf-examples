@@ -1,0 +1,60 @@
+{
+  "name": "nx-react-vite-remote-1",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5201 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 5201 --strictPort"
+  },
+  "nx": {
+    "name": "nx-react-vite-remote-1",
+    "targets": {
+      "serve": {
+        "executor": "nx:run-commands",
+        "continuous": true,
+        "dependsOn": [
+          "nx-react-vite-host:serve",
+          "nx-react-vite-remote-2:serve-static",
+          "nx-react-vite-remote-3:serve-static"
+        ],
+        "options": {
+          "command": "vite --port 5201 --strictPort",
+          "cwd": "{projectRoot}"
+        }
+      },
+      "serve-static": {
+        "executor": "nx:run-commands",
+        "continuous": true,
+        "dependsOn": ["build"],
+        "options": {
+          "command": "vite preview --port 5201 --strictPort --outDir dist",
+          "cwd": "{projectRoot}"
+        }
+      },
+      "build": {
+        "executor": "nx:run-commands",
+        "cache": true,
+        "outputs": ["{projectRoot}/dist"],
+        "options": {
+          "command": "vite build",
+          "cwd": "{projectRoot}"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.15.0"
+  },
+  "devDependencies": {
+    "@module-federation/vite": "^1.15.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.2",
+    "typescript": "~5.9.2",
+    "vite": "^8.0.13"
+  }
+}

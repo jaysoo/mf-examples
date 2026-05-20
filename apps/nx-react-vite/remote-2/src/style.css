@@ -1,0 +1,52 @@
+.remote-2 {
+  --accent: #16a34a;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 24px;
+  background: white;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.remote-2 h1 {
+  margin-top: 0;
+  color: var(--accent);
+}
+
+.remote-2 .form {
+  display: grid;
+  gap: 12px;
+}
+
+.remote-2 .form label {
+  display: grid;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.remote-2 .form input,
+.remote-2 .form textarea {
+  padding: 8px;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.remote-2 .form button {
+  padding: 8px 16px;
+  font-size: 16px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.remote-2 .output {
+  margin-top: 16px;
+  background: #f0fdf4;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 12px;
+  color: #14532d;
+}
