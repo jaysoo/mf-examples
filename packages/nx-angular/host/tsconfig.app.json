@@ -4,18 +4,12 @@
     "outDir": "../../../dist/out-tsc",
     "types": [],
     "target": "ES2020",
-    "lib": [
-      "es2022",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["es2022", "dom", "dom.iterable"],
     "emitDeclarationOnly": false,
     "declaration": false,
     "composite": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
@@ -31,15 +25,5 @@
     "src/**/*.spec.jsx",
     "src/test-setup.ts"
   ],
-  "references": [
-    {
-      "path": "../ng_remote3/tsconfig.app.json"
-    },
-    {
-      "path": "../ng_remote2/tsconfig.app.json"
-    },
-    {
-      "path": "../ng_remote1/tsconfig.app.json"
-    }
-  ]
+  "references": []
 }

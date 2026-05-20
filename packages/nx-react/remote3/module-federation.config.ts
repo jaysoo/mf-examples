@@ -5,9 +5,12 @@ const config: ModuleFederationConfig = {
   exposes: {
     './Module': './src/remote-entry.ts',
   },
+  shared: (libraryName, defaultConfig) => {
+    if (libraryName === 'react' || libraryName === 'react-dom' || libraryName.startsWith('react/') || libraryName.startsWith('react-dom/')) {
+      return { ...defaultConfig, eager: true, singleton: true, requiredVersion: false, strictVersion: false };
+    }
+    return defaultConfig;
+  },
 };
 
-/**
- * Nx requires a default export of the config to allow correct resolution of the module federation graph.
- **/
 export default config;

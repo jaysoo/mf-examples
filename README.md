@@ -1,105 +1,153 @@
-# New Nx Repository
+# mf-examples
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A side-by-side set of working Module Federation examples across the common React and Angular toolchains. Each tree is one host + three remotes (Counter / Form / List), with Playwright e2e + screenshots as proof-of-work.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+For an in-depth comparison of capabilities, gotchas, and trade-offs across all setups, see [`MF-COMPARISON.md`](./MF-COMPARISON.md).
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-## Try the full Nx platform
-🚀 If you haven't connected to Nx Cloud yet, [complete your setup here](https://cloud.nx.app/setup/connect-workspace/guide). Get faster builds with remote caching, distributed task execution, and self-healing CI. [See how your workspace can benefit](#nx-cloud).
-## Generate a library
+## What's here
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+| Path | Stack | Bundler | MF plugin | Default ports |
+|------|-------|---------|-----------|---------------|
+| [`packages/react-rspack`](./packages/react-rspack) | React 19 | Rspack CLI | `@module-federation/enhanced` | 3000 / 3001-3 |
+| [`packages/react-rsbuild`](./packages/react-rsbuild) | React 19 | Rsbuild | `@module-federation/enhanced` via `tools.rspack` | 3000 / 3001-3 |
+| [`packages/react-vite`](./packages/react-vite) | React 19 | Vite | `@module-federation/vite` | 5100 / 5101-3 |
+| [`packages/angular-native-fed`](./packages/angular-native-fed) | Angular 21 | esbuild | `@angular-architects/native-federation` | 4200 / 4201-3 |
+| [`packages/nx-react`](./packages/nx-react) | React 19, Nx-generated | Rspack | `@nx/module-federation` | 4200 / 4201-3 |
+| [`packages/nx-angular`](./packages/nx-angular) | Angular 21, Nx-generated | Webpack | `@nx/module-federation` (classic MF, not Native Fed) | 4200 / 4201-3 |
+
+Each tree exposes the same three remotes:
+- **remote-1 / remote1** — `useState` Counter with +/-/reset buttons
+- **remote-2 / remote2** — Controlled Form (Name/Email/Message) that echoes the submitted payload
+- **remote-3 / remote3** — Fetches users from `jsonplaceholder.typicode.com` and renders the list
+
+Each remote is also independently runnable on its own port — federation-loaded *and* standalone work.
+
+## Setup
+
+```bash
+pnpm install
 ```
 
-## Run tasks
+The workspace uses pnpm workspaces (`packages/*` and `packages/*/*` globbed). Node and pnpm versions are in `.nvmrc` / `packageManager` (Node 20+, pnpm 10).
 
-To build the library use:
+## How to run each stack
 
-```sh
-npx nx build pkg1
+### React + Rspack (`packages/react-rspack`)
+
+```bash
+cd packages/react-rspack
+pnpm dev               # boots host (3000) + 3 remotes (3001/2/3), each its own dev server
+pnpm build             # production builds for all 4 apps -> dist/
+pnpm test:e2e          # Playwright; screenshots in e2e/screenshots/
 ```
 
-To run any task with Nx use:
+Each app also runs in isolation: `cd host && pnpm dev`, etc.
 
-```sh
-npx nx <target> <project-name>
+### React + Rsbuild (`packages/react-rsbuild`)
+
+```bash
+cd packages/react-rsbuild
+pnpm dev
+pnpm build
+pnpm preview           # rsbuild's built-in static server for the built dist/
+pnpm test:e2e
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### React + Vite (`packages/react-vite`)
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Versioning and releasing
-
-To version and release the library use
-
-```
-npx nx release
+```bash
+cd packages/react-vite
+pnpm dev               # uses concurrently to orchestrate the 4 vite servers
+pnpm build
+pnpm preview
+pnpm test:e2e
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+Ports are 5100-5103 (not 5000-5003) — macOS AirTunes hijacks port 5000 on the IPv4 wildcard, which Vite is sensitive to.
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Angular Native Federation (`packages/angular-native-fed`)
 
-## Keep TypeScript project references up to date
-
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
-
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
+```bash
+cd packages/angular-native-fed
+pnpm dev               # concurrently runs 4 ng serves
+pnpm build             # ng build each app
+pnpm test:e2e
 ```
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+The host loads remote URLs from `projects/host/public/federation.manifest.json` at runtime — change that JSON to point at different remote URLs without rebuilding. This is the only tree designed around dynamic federation as the default.
 
-```sh
-npx nx sync:check
+### Nx React (`packages/nx-react`)
+
+These trees are managed by Nx at the workspace root, not via per-tree scripts. Run from the repo root (the `NX_IGNORE_UNSUPPORTED_TS_SETUP=true` env var is needed because the workspace was bootstrapped as `@nx/js:typescript` which Angular's plugin doesn't fully support):
+
+```bash
+# host + all 3 remotes in dev (parallel dev servers — most reliable for this repo)
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true \
+  pnpm exec nx run-many --target=serve --projects=host,remote1,remote2,remote3 --parallel=4
+
+# OR — the canonical Nx pattern: serve any single remote, host comes up automatically,
+# the other two remotes are built once and statically proxied
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run remote2:serve
+
+# OR — serve host directly, the plugin builds + static-serves all 3 remotes
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run host:serve
+
+# e2e + screenshots
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run host-e2e:e2e
 ```
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+If you ever `nx reset` or delete `tmp/static-remotes/`, pre-build the other remotes once so the static proxy has files to serve:
 
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Set up CI (non-Github Actions CI)
-
-**Note:** This is only required if your CI provider is not GitHub Actions.
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
+```bash
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true \
+  pnpm exec nx run-many --target=rspack:build --projects=remote1,remote2,remote3 --configuration=development
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Nx Angular (`packages/nx-angular`)
 
-## Install Nx Console
+```bash
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host:serve
+NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host-e2e:e2e
+```
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+Project names: `ng-host` plus `ng_remote1` / `ng_remote2` / `ng_remote3` (Nx's project-name rules disallow hyphens in the federation specifier, and we needed a different host name to avoid collision with the Nx React `host` project).
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Screenshots
 
-## Useful links
+Each tree's e2e captures 7 full-page screenshots:
 
-Learn more:
+- `01-home.png` — host home page listing the 3 remotes
+- `02-remote-1-counter.png` — federated Counter route inside the host
+- `03-remote-2-form.png` — federated Form route inside the host
+- `04-remote-3-list.png` — federated List route inside the host
+- `05-standalone-remote-1.png` — remote 1 visited on its own port (no host nav)
+- `06-standalone-remote-2.png` — remote 2 standalone
+- `07-standalone-remote-3.png` — remote 3 standalone
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Locations:
+- React (non-Nx): `packages/react-*/e2e/screenshots/`
+- Angular Native Fed: `packages/angular-native-fed/e2e/screenshots/`
+- Nx trees: `packages/nx-*/host-e2e/screenshots/`
 
-And join the Nx community:
+All screenshot directories are gitignored — they regenerate on every `test:e2e` run.
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Comparing trees
+
+The React `src/` is byte-identical across `react-rspack`, `react-rsbuild`, and `react-vite` — only the bundler config differs. That's intentional, so you can `diff -r` and see exactly what changes when you swap bundlers.
+
+The Nx React tree diverges slightly because the Nx generator uses `remote1` (no hyphen — Nx project name rule) and the host references remotes via `module-federation.config.ts` instead of inline plugin config.
+
+The Angular trees are functionally equivalent but use Angular template/signals syntax, so they don't parity with React.
+
+## Key files per tree
+
+| Concern | Plain React (rspack/rsbuild/vite) | Angular Native Fed | Nx React | Nx Angular |
+|---|---|---|---|---|
+| Bundler config | `<app>/{rspack,rsbuild,vite}.config.ts` | `projects/<app>/` (Angular CLI handles it) | `<app>/rspack.config.ts` | `<app>/webpack.config.ts` |
+| Federation config | inline in bundler config | `projects/<app>/federation.config.js` | `<app>/module-federation.config.ts` | `<app>/module-federation.config.ts` |
+| Remote URL list | inline `remotes: {...}` in host's bundler config | `projects/host/public/federation.manifest.json` (runtime) | host's `module-federation.config.ts` `remotes: [...]` | same |
+| Exposed entry | `src/RoutedApp.tsx` (React) | `projects/<remote>/src/app/remote-entry/entry.ts` | `<remote>/src/remote-entry.ts` | `projects/<remote>/src/app/remote-entry/entry.ts` |
+
+## License
+
+MIT
