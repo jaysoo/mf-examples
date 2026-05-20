@@ -6,8 +6,8 @@ For an in-depth comparison of capabilities, gotchas, and trade-offs across all s
 
 ## What's here
 
-| Path                                                           | Stack                    | Bundler    | MF plugin                                            | Default ports |
-| -------------------------------------------------------------- | ------------------------ | ---------- | ---------------------------------------------------- | ------------- |
+| Path                                                   | Stack                    | Bundler    | MF plugin                                            | Default ports |
+| ------------------------------------------------------ | ------------------------ | ---------- | ---------------------------------------------------- | ------------- |
 | [`apps/react-rspack`](./apps/react-rspack)             | React 19                 | Rspack CLI | `@module-federation/enhanced`                        | 3000 / 3001-3 |
 | [`apps/react-rsbuild`](./apps/react-rsbuild)           | React 19                 | Rsbuild    | `@module-federation/enhanced` via `tools.rspack`     | 3000 / 3001-3 |
 | [`apps/react-vite`](./apps/react-vite)                 | React 19                 | Vite       | `@module-federation/vite`                            | 5100 / 5101-3 |
@@ -181,26 +181,6 @@ This proves you don't need to run every remote dev server to develop the host. I
 - **angular-native-fed** — already dynamic-by-default. The host's `initFederation('federation.manifest.json')` reads the manifest at boot; `loadRemoteModule()` triggers per-route fetches. No code changes needed beyond the e2e proof.
 
 To swap remote URLs per environment without rebuilding, you just edit `mf-remotes.json` (React) or `federation.manifest.json` (Angular) before serving.
-
-## Screenshots
-
-Each tree's e2e captures 7 full-page screenshots:
-
-- `01-home.png` — host home page listing the 3 remotes
-- `02-remote-1-counter.png` — federated Counter route inside the host
-- `03-remote-2-form.png` — federated Form route inside the host
-- `04-remote-3-list.png` — federated List route inside the host
-- `05-standalone-remote-1.png` — remote 1 visited on its own port (no host nav)
-- `06-standalone-remote-2.png` — remote 2 standalone
-- `07-standalone-remote-3.png` — remote 3 standalone
-
-Locations:
-
-- React (non-Nx): `apps/react-*/e2e/screenshots/`
-- Angular Native Fed: `apps/angular-native-fed/e2e/screenshots/`
-- Nx trees: `apps/nx-*/host-e2e/screenshots/`
-
-All screenshot directories are gitignored — they regenerate on every `test:e2e` run.
 
 ## Comparing trees
 
