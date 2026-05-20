@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
-import { init } from '@module-federation/enhanced/runtime';
+import { registerRemotes } from '@module-federation/enhanced/runtime';
 import { router } from './routes';
 import './style.css';
 
@@ -14,13 +14,15 @@ async function start() {
   if (!res.ok) throw new Error(`failed to fetch mf-remotes.json: ${res.status}`);
   const manifest = (await res.json()) as RemoteManifest;
 
-  init({
-    name: 'host',
-    remotes: Object.entries(manifest).map(([alias, entry]) => {
+  // The build plugin already created a default ModuleFederation instance
+  // (with name 'host' from rsbuild.config.ts). registerRemotes adds remotes
+  // to that existing instance — preferred over init() which is deprecated.
+  registerRemotes(
+    Object.entries(manifest).map(([alias, entry]) => {
       const [name, url] = entry.includes('@') ? entry.split('@') : [alias.replace(/-/g, '_'), entry];
       return { name, alias, entry: url };
     }),
-  });
+  );
 
   const container = document.getElementById('root');
   if (!container) throw new Error('#root element not found');
