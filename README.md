@@ -8,12 +8,12 @@ For an in-depth comparison of capabilities, gotchas, and trade-offs across all s
 
 | Path                                                           | Stack                    | Bundler    | MF plugin                                            | Default ports |
 | -------------------------------------------------------------- | ------------------------ | ---------- | ---------------------------------------------------- | ------------- |
-| [`packages/react-rspack`](./packages/react-rspack)             | React 19                 | Rspack CLI | `@module-federation/enhanced`                        | 3000 / 3001-3 |
-| [`packages/react-rsbuild`](./packages/react-rsbuild)           | React 19                 | Rsbuild    | `@module-federation/enhanced` via `tools.rspack`     | 3000 / 3001-3 |
-| [`packages/react-vite`](./packages/react-vite)                 | React 19                 | Vite       | `@module-federation/vite`                            | 5100 / 5101-3 |
-| [`packages/angular-native-fed`](./packages/angular-native-fed) | Angular 21               | esbuild    | `@angular-architects/native-federation`              | 4200 / 4201-3 |
-| [`packages/nx-react`](./packages/nx-react)                     | React 19, Nx-generated   | Rspack     | `@nx/module-federation`                              | 4200 / 4201-3 |
-| [`packages/nx-angular`](./packages/nx-angular)                 | Angular 21, Nx-generated | Webpack    | `@nx/module-federation` (classic MF, not Native Fed) | 4200 / 4201-3 |
+| [`apps/react-rspack`](./apps/react-rspack)             | React 19                 | Rspack CLI | `@module-federation/enhanced`                        | 3000 / 3001-3 |
+| [`apps/react-rsbuild`](./apps/react-rsbuild)           | React 19                 | Rsbuild    | `@module-federation/enhanced` via `tools.rspack`     | 3000 / 3001-3 |
+| [`apps/react-vite`](./apps/react-vite)                 | React 19                 | Vite       | `@module-federation/vite`                            | 5100 / 5101-3 |
+| [`apps/angular-native-fed`](./apps/angular-native-fed) | Angular 21               | esbuild    | `@angular-architects/native-federation`              | 4200 / 4201-3 |
+| [`apps/nx-react`](./apps/nx-react)                     | React 19, Nx-generated   | Rspack     | `@nx/module-federation`                              | 4200 / 4201-3 |
+| [`apps/nx-angular`](./apps/nx-angular)                 | Angular 21, Nx-generated | Webpack    | `@nx/module-federation` (classic MF, not Native Fed) | 4200 / 4201-3 |
 
 Each tree exposes the same three remotes:
 
@@ -29,14 +29,14 @@ Each remote is also independently runnable on its own port — federation-loaded
 pnpm install
 ```
 
-The workspace uses pnpm workspaces (`packages/*` and `packages/*/*` globbed). Node and pnpm versions are in `.nvmrc` / `packageManager` (Node 20+, pnpm 10).
+The workspace uses pnpm workspaces (`apps/*` and `apps/*/*` globbed). Node and pnpm versions are in `.nvmrc` / `packageManager` (Node 20+, pnpm 10).
 
 ## How to run each stack
 
-### React + Rspack (`packages/react-rspack`)
+### React + Rspack (`apps/react-rspack`)
 
 ```bash
-cd packages/react-rspack
+cd apps/react-rspack
 pnpm dev               # boots host (3000) + 3 remotes (3001/2/3), each its own dev server
 pnpm build             # production builds for all 4 apps -> dist/
 pnpm test:e2e          # Playwright; screenshots in e2e/screenshots/
@@ -44,20 +44,20 @@ pnpm test:e2e          # Playwright; screenshots in e2e/screenshots/
 
 Each app also runs in isolation: `cd host && pnpm dev`, etc.
 
-### React + Rsbuild (`packages/react-rsbuild`)
+### React + Rsbuild (`apps/react-rsbuild`)
 
 ```bash
-cd packages/react-rsbuild
+cd apps/react-rsbuild
 pnpm dev
 pnpm build
 pnpm preview           # rsbuild's built-in static server for the built dist/
 pnpm test:e2e
 ```
 
-### React + Vite (`packages/react-vite`)
+### React + Vite (`apps/react-vite`)
 
 ```bash
-cd packages/react-vite
+cd apps/react-vite
 pnpm dev               # uses concurrently to orchestrate the 4 vite servers
 pnpm build
 pnpm preview
@@ -66,10 +66,10 @@ pnpm test:e2e
 
 Ports are 5100-5103 (not 5000-5003) — macOS AirTunes hijacks port 5000 on the IPv4 wildcard, which Vite is sensitive to.
 
-### Angular Native Federation (`packages/angular-native-fed`)
+### Angular Native Federation (`apps/angular-native-fed`)
 
 ```bash
-cd packages/angular-native-fed
+cd apps/angular-native-fed
 pnpm dev               # concurrently runs 4 ng serves
 pnpm build             # ng build each app
 pnpm test:e2e
@@ -77,7 +77,7 @@ pnpm test:e2e
 
 The host loads remote URLs from `projects/host/public/federation.manifest.json` at runtime — change that JSON to point at different remote URLs without rebuilding. This is the only tree designed around dynamic federation as the default.
 
-### Nx React (`packages/nx-react`)
+### Nx React (`apps/nx-react`)
 
 These trees are managed by Nx at the workspace root, not via per-tree scripts. Run from the repo root (the `NX_IGNORE_UNSUPPORTED_TS_SETUP=true` env var is needed because the workspace was bootstrapped as `@nx/js:typescript` which Angular's plugin doesn't fully support):
 
@@ -104,7 +104,7 @@ NX_IGNORE_UNSUPPORTED_TS_SETUP=true \
   pnpm exec nx run-many --target=rspack:build --projects=remote1,remote2,remote3 --configuration=development
 ```
 
-### Nx Angular (`packages/nx-angular`)
+### Nx Angular (`apps/nx-angular`)
 
 ```bash
 NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host:serve
@@ -112,6 +112,32 @@ NX_IGNORE_UNSUPPORTED_TS_SETUP=true pnpm exec nx run ng-host-e2e:e2e
 ```
 
 Project names: `ng-host` plus `ng_remote1` / `ng_remote2` / `ng_remote3` (Nx's project-name rules disallow hyphens in the federation specifier, and we needed a different host name to avoid collision with the Nx React `host` project).
+
+## Dynamic federation mode
+
+All four "plain" trees (react-rspack, react-rsbuild, react-vite, angular-native-fed) ship a **second e2e suite** that proves dynamic / runtime federation works:
+
+```bash
+cd apps/react-rspack    && pnpm test:e2e:dynamic
+cd apps/react-rsbuild   && pnpm test:e2e:dynamic
+cd apps/react-vite      && pnpm test:e2e:dynamic
+cd apps/angular-native-fed && pnpm test:e2e:dynamic
+```
+
+Each dynamic suite spawns **only the host + remote-1** (not all 3 remotes). The host's remote list still references remote-2 / remote-3, but because remote URLs are fetched lazily, the host:
+
+1. Boots cleanly with zero console errors.
+2. Renders `/remote-1` (server alive) correctly.
+3. (React trees) Falls back to a `<RemoteErrorBoundary>` when `/remote-2` is visited and remote-2's server is unreachable — host doesn't crash.
+
+This proves you don't need to run every remote dev server to develop the host. In a real org with 30+ remotes, this is what lets a developer run only the 1-2 remotes they own locally and point at deployed URLs (or rely on a graceful 404) for everything else.
+
+**How each tree implements it:**
+
+- **react-{rspack,rsbuild,vite}** — host's bundler config drops `remotes:`. Host fetches `public/mf-remotes.json` at boot and calls `init({ remotes: [...] })` from `@module-federation/runtime` (or `@module-federation/enhanced/runtime`). Routes use `loadRemote('remote-N/RoutedApp')` instead of static `import('remote-N/...')`.
+- **angular-native-fed** — already dynamic-by-default. The host's `initFederation('federation.manifest.json')` reads the manifest at boot; `loadRemoteModule()` triggers per-route fetches. No code changes needed beyond the e2e proof.
+
+To swap remote URLs per environment without rebuilding, you just edit `mf-remotes.json` (React) or `federation.manifest.json` (Angular) before serving.
 
 ## Screenshots
 
@@ -127,9 +153,9 @@ Each tree's e2e captures 7 full-page screenshots:
 
 Locations:
 
-- React (non-Nx): `packages/react-*/e2e/screenshots/`
-- Angular Native Fed: `packages/angular-native-fed/e2e/screenshots/`
-- Nx trees: `packages/nx-*/host-e2e/screenshots/`
+- React (non-Nx): `apps/react-*/e2e/screenshots/`
+- Angular Native Fed: `apps/angular-native-fed/e2e/screenshots/`
+- Nx trees: `apps/nx-*/host-e2e/screenshots/`
 
 All screenshot directories are gitignored — they regenerate on every `test:e2e` run.
 

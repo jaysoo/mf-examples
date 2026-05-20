@@ -5,7 +5,8 @@
     "ng": "ng",
     "dev": "concurrently -k -n host,r1,r2,r3 -c blue,red,green,magenta \"ng serve host\" \"ng serve remote-1\" \"ng serve remote-2\" \"ng serve remote-3\"",
     "build": "ng build host && ng build remote-1 && ng build remote-2 && ng build remote-3",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:dynamic": "playwright test --config=playwright.dynamic.config.ts"
   },
   "private": true,
   "packageManager": "pnpm@10.33.0",

@@ -17,29 +17,8 @@ export default defineConfig({
     federation({
       name: 'host',
       filename: 'remoteEntry.js',
-      remotes: {
-        'remote-1': {
-          type: 'module',
-          name: 'remote-1',
-          entry: 'http://localhost:5101/remoteEntry.js',
-          entryGlobalName: 'remote_1',
-          shareScope: 'default',
-        },
-        'remote-2': {
-          type: 'module',
-          name: 'remote-2',
-          entry: 'http://localhost:5102/remoteEntry.js',
-          entryGlobalName: 'remote_2',
-          shareScope: 'default',
-        },
-        'remote-3': {
-          type: 'module',
-          name: 'remote-3',
-          entry: 'http://localhost:5103/remoteEntry.js',
-          entryGlobalName: 'remote_3',
-          shareScope: 'default',
-        },
-      },
+      // No build-time `remotes:` - they are registered at runtime in
+      // src/bootstrap.tsx after fetching public/mf-remotes.json.
       shared: {
         react: { singleton: true },
         'react-dom': { singleton: true },

@@ -1,0 +1,5 @@
+{
+  "remote-1": "remote-1@http://localhost:5101/remoteEntry.js",
+  "remote-2": "remote-2@http://localhost:5102/remoteEntry.js",
+  "remote-3": "remote-3@http://localhost:5103/remoteEntry.js"
+}

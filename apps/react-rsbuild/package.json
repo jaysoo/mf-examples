@@ -6,7 +6,8 @@
     "dev": "pnpm -F './*' --parallel dev",
     "build": "pnpm -F './*' build",
     "preview": "pnpm -F './*' --parallel preview",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:dynamic": "playwright test --config=playwright.dynamic.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

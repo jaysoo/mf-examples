@@ -53,11 +53,8 @@ export default defineConfig({
     new rspack.HtmlRspackPlugin({ template: './index.html' }),
     new ModuleFederationPlugin({
       name: 'host',
-      remotes: {
-        'remote-1': 'remote_1@http://localhost:3001/mf-manifest.json',
-        'remote-2': 'remote_2@http://localhost:3002/mf-manifest.json',
-        'remote-3': 'remote_3@http://localhost:3003/mf-manifest.json',
-      },
+      // No build-time `remotes:` - they are registered at runtime in
+      // src/bootstrap.tsx after fetching public/mf-remotes.json.
       shared: ['react', 'react-dom', 'react-router-dom'],
     }),
   ],

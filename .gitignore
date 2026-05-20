@@ -51,7 +51,9 @@ Thumbs.db
 # Playwright
 **/test-results/
 **/playwright-report/
+**/playwright-report-dynamic/
 **/e2e/screenshots/
+**/e2e-dynamic/screenshots/
 **/host-e2e/screenshots/
 **/host-e2e/test-output/
 

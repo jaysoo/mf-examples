@@ -40,18 +40,41 @@ Six tree comparison across `packages/`:
 
 ## Dynamic federation (registering remotes at runtime, no build-time `remotes` config)
 
-| Tree                 | Static config                                                                                                                                        | Runtime register API                                                                                          | True dynamic from JSON                                                                                                                                   |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `react-rspack`       | `remotes: {...}` in plugin (what we use)                                                                                                             | `init({ remotes: [{name, entry}] })` + `loadRemote('name/expose')` from `@module-federation/enhanced/runtime` | ✅ runtime API can fetch any JSON and call `init` with it                                                                                                |
-| `react-rsbuild`      | same                                                                                                                                                 | same                                                                                                          | same                                                                                                                                                     |
-| `react-vite`         | `remotes: {...}` (what we use)                                                                                                                       | runtime API exposed (same enhanced runtime)                                                                   | ✅                                                                                                                                                       |
-| `angular-native-fed` | optional — `federation.manifest.json` is loaded **at runtime** by `initFederation('federation.manifest.json')`; remotes are NOT baked into the build | `loadRemoteModule('name', './expose')`                                                                        | ✅✅ **native** model — manifest can be different per environment without rebuilding                                                                     |
-| `nx-react`           | `remotes: ['remote1', ...]` in `module-federation.config.ts` (what we use)                                                                           | enhanced runtime works                                                                                        | ✅ Nx supports tuple syntax `remotes: [['my-remote', 'https://...']]` for external (non-workspace) remotes; can also pass `--dynamic` at generation time |
-| `nx-angular`         | same                                                                                                                                                 | same                                                                                                          | ✅ same                                                                                                                                                  |
+Implemented in this repo for 4 trees — each has both a static (`test:e2e`) and a dynamic (`test:e2e:dynamic`) suite. The dynamic suite spawns **only host + remote-1**, proving the host doesn't need every remote dev server running.
 
-**Bottom line:** all setups support dynamic federation via the federation runtime API.
+| Tree                 | Implementation in this repo                                                                                                                                      | Dynamic e2e                | True dynamic from JSON |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ---------------------- |
+| `react-rspack`       | Host drops `remotes:` from bundler config; bootstrap fetches `public/mf-remotes.json` and calls `init()`; routes use `loadRemote()`                              | `pnpm test:e2e:dynamic`    | ✅                     |
+| `react-rsbuild`      | same as rspack                                                                                                                                                   | `pnpm test:e2e:dynamic`    | ✅                     |
+| `react-vite`         | same pattern using `@module-federation/runtime` (separate package because `@module-federation/vite` doesn't bundle the enhanced runtime)                         | `pnpm test:e2e:dynamic`    | ✅                     |
+| `angular-native-fed` | Dynamic-by-default. `initFederation('federation.manifest.json')` fetches the manifest at boot; `loadRemoteModule()` triggers per-route fetches. No code changes. | `pnpm test:e2e:dynamic`    | ✅✅                   |
+| `nx-react`           | Static `remotes: ['remote1', ...]` in `module-federation.config.ts`; enhanced runtime works if you switch                                                        | not yet                    | ✅ possible            |
+| `nx-angular`         | same                                                                                                                                                             | not yet                    | ✅ possible            |
 
-**Angular Native Federation is the only one designed around it as the default.** The manifest URL is loaded at runtime via `initFederation('/assets/federation.manifest.json')`, so you can ship the same build to dev/staging/prod with a different manifest per env. The webpack/rspack-based options technically support the same pattern but you have to choose to use the runtime API instead of the plugin-config approach.
+**How the dynamic React setup works:**
+
+1. **Bundler config drops `remotes:`** — the build no longer bakes in a list.
+2. **`public/mf-remotes.json`** is a static asset served at `/mf-remotes.json`. Example:
+   ```json
+   { "remote-1": "remote_1@http://localhost:3001/mf-manifest.json", ... }
+   ```
+3. **`src/bootstrap.tsx`** (run before React renders):
+   ```ts
+   import { init } from '@module-federation/enhanced/runtime';
+   const manifest = await fetch('/mf-remotes.json').then(r => r.json());
+   init({ name: 'host', remotes: Object.entries(manifest).map(([alias, entry]) => {
+     const [name, url] = entry.split('@');
+     return { name, alias, entry: url };
+   }) });
+   // …then render React app
+   ```
+4. **`src/routes.tsx`** swaps `lazy(() => import('remote-1/RoutedApp'))` → `lazy(() => loadRemote('remote-1/RoutedApp'))`.
+
+To swap remote URLs per environment, edit `mf-remotes.json` before serving — no rebuild needed.
+
+**Why it scales:** the federation runtime fetches a remote's `mf-manifest.json` only when `loadRemote()` is called for it. With React Router's `lazy()`, that happens on route navigation. So a host with 30 remotes registered only fetches the 1-3 a given user actually visits.
+
+**Bottom line:** all setups support dynamic federation via the federation runtime API. Angular Native Federation ships it as the default; the React trees here ship both static and dynamic variants you can pick from.
 
 ---
 

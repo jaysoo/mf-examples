@@ -1,15 +1,26 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type ComponentType } from 'react';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { loadRemote } from '@module-federation/enhanced/runtime';
 import { Nav } from './components/Nav';
 import { Loading } from './components/Loading';
 import { RemoteErrorBoundary } from './components/RemoteErrorBoundary';
 import { Home } from './pages/Home';
 
-const RemoteOne = lazy(() => import('remote-1/RoutedApp'));
-const RemoteTwo = lazy(() => import('remote-2/RoutedApp'));
-const RemoteThree = lazy(() => import('remote-3/RoutedApp'));
+// Dynamic federation: the remote alias must have been registered by
+// bootstrap.tsx via init() before this lazy boundary fires.
+function lazyRemote(specifier: string) {
+  return lazy(async () => {
+    const mod = await loadRemote<{ default: ComponentType }>(specifier);
+    if (!mod?.default) throw new Error(`remote module ${specifier} has no default export`);
+    return { default: mod.default };
+  });
+}
 
-function remote(Component: React.ComponentType) {
+const RemoteOne = lazyRemote('remote-1/RoutedApp');
+const RemoteTwo = lazyRemote('remote-2/RoutedApp');
+const RemoteThree = lazyRemote('remote-3/RoutedApp');
+
+function remote(Component: ComponentType) {
   return (
     <RemoteErrorBoundary>
       <Suspense fallback={<Loading />}>
