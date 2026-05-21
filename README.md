@@ -164,3 +164,9 @@ Ports: 5200 (host) / 5201-5203 (remotes). The orchestration uses plain `nx:run-c
 | Federation config | inline in bundler config                         | `projects/<app>/federation.config.js`                     | `<app>/module-federation.config.ts`                   | `<app>/module-federation.config.ts`               |
 | Remote URL list   | inline `remotes: {...}` in host's bundler config | `projects/host/public/federation.manifest.json` (runtime) | host's `module-federation.config.ts` `remotes: [...]` | same                                              |
 | Exposed entry     | `src/RoutedApp.tsx` (React)                      | `projects/<remote>/src/app/remote-entry/entry.ts`         | `<remote>/src/remote-entry.ts`                        | `projects/<remote>/src/app/remote-entry/entry.ts` |
+
+> [!WARNING]
+> **`@nx/s3-cache` is deprecated.**
+> `@nx/s3-cache` provides an S3-backed remote cache for Nx. The CREEP vulnerability ([CVE-2025-36852](https://www.cve.org/CVERecord?id=CVE-2025-36852)) affects this package. The flaw is in its design and cannot be patched. The package remains on npm but will not receive updates.
+>
+> See the [deprecation notice](https://nx.dev/docs/deprecations/self-hosted-cache-packages) for migration paths.
